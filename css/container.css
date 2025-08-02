@@ -150,7 +150,7 @@
   color: var(--cor-13);
 }
 
-.tarefa-item .lixeira {
+.tarefa-item .lixeira-icone {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
@@ -158,7 +158,7 @@
   transition: transform 300ms ease-in-out;
 }
 
-.tarefa-item .lixeira:hover {
+.tarefa-item .lixeira-icone:hover {
   transform: scale(1.20);
 }
 

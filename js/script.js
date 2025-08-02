@@ -1,94 +1,15 @@
-import criarLiElement from './modules/create-li.js';
-import isTruncada from './modules/is-truncada.js';
-
 const formTarefa = document.querySelector('.form-tarefa');
 const inputAdicionarTarefa = document.querySelector('.tarefa-input');
-const containerTarefas = document.querySelector('ul');
+const containerTarefas = document.querySelector('.container-tarefas');
 const textoInfo = document.querySelector('.texto-info');
 const containerModal = document.querySelector('.container-modal');
 const btnFecharModal = document.querySelector('.fechar-modal');
+const templateTarefa = document.querySelector('#template-tarefa');
 
 let tarefas = [];
 
-const adicionarTarefa = () => {
-  const descricaoTarefa = inputAdicionarTarefa.value.trim();
-
-  if (descricaoTarefa) {
-    const newLiElement = criarLiElement(descricaoTarefa);
-    containerTarefas.appendChild(newLiElement);
-
-    textoInfo.classList.add('hidden');
-    containerTarefas.classList.add('ativo');
-
-    tarefas.push(descricaoTarefa);
-    inputAdicionarTarefa.value = '';
-    inputAdicionarTarefa.focus();
-  } else {
-    alert('Você precisa informar uma tarefa válida');
-    inputAdicionarTarefa.focus();
-  }
-};
-
-const deletarTarefa = event => {
-  const liElement = event.target.closest('li');
-  const descricaoTarefa = liElement.querySelector('div:first-child span').innerText;
-
-  if (tarefas.includes(descricaoTarefa)) {
-    liElement.remove();
-
-    tarefas = tarefas.filter(tarefa => tarefa !== descricaoTarefa);
-
-    if (tarefas.length === 0) {
-      textoInfo.classList.remove('hidden');
-      containerTarefas.classList.remove('ativo');
-    }
-  }
-};
-
-const finalizarTarefa = event => {
-  const checkbox = event.target.closest('.tarefa-descricao').previousElementSibling;
-
-  if (!checkbox.checked) {
-    checkbox.checked = true;
-  } else {
-    checkbox.checked = false;
-  }
-};
-
-const toggleModal = () => {
-  containerModal.classList.toggle('ativo');
-};
-
-const cliqueForaModal = event => {
-  if (event.target === containerModal) {
-    toggleModal();
-  }
-};
-
-const handleClick = event => {
-  const target = event.target;
-  if (target.closest('.lixeira')) {
-    deletarTarefa(event);
-  }
-
-  if (target.closest('.tarefa-descricao') && !isTruncada(target.closest('.tarefa-descricao'))) {
-    finalizarTarefa(event);
-  }
-
-  if (target.closest('.tarefa-descricao') && isTruncada(target.closest('.tarefa-descricao'))) {
-    const descricaoCompleta = event.target.innerText;
-    const paragrafo = containerModal.querySelector('p');
-    paragrafo.innerText = descricaoCompleta;
-    toggleModal();
-  }
-};
-
-formTarefa.addEventListener('submit', event => {
-  event.preventDefault();
-  adicionarTarefa();
+const criarTarefa = (descricao) => ({
+  id: crypto.randomUUID(),
+  descricao,
+  finalizada: false,
 });
-
-containerTarefas.addEventListener('click', handleClick);
-
-btnFecharModal.addEventListener('click', toggleModal);
-containerModal.addEventListener('click', cliqueForaModal);

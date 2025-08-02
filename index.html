@@ -29,6 +29,19 @@
     <p class="texto-info">Não há tarefas no momento</p>
 
     <ul class="container-tarefas">
+      <template id="template-tarefa">
+        <li class="tarefa-item" data-id>
+          <div class="tarefa-conteudo">
+            <label for="tarefa-label">
+              <input type="checkbox" class="tarefa-checkbox">
+              <span class="tarefa-descricao" title=""></span>
+            </label>
+          </div>
+          <div class="lixeira-icone">
+            <img src="./img/lixeira-icon.svg" alt="">
+          </div>
+        </li>
+      </template>
     </ul>
   </section>
 
@@ -38,6 +51,6 @@
       <button class="fechar-modal">Fechar</button>
     </div>
   </section>
-  <script type="module" src="./js/script.js"></script>
+  <script src="./js/script.js"></script>
 </body>
 </html>
