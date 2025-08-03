@@ -4,8 +4,8 @@ const formTarefa = document.querySelector('.form-tarefa');
 const inputAdicionarTarefa = document.querySelector('.tarefa-input');
 const containerTarefas = document.querySelector('.container-tarefas');
 const textoInfo = document.querySelector('.texto-info');
-const containerModal = document.querySelector('.container-modal');
-const btnFecharModal = document.querySelector('.fechar-modal');
+const containerModal = document.querySelector('[data-container-modal]');
+const btnFecharModal = document.querySelector('[data-fechar-modal]');
 const templateTarefa = document.querySelector('#template-tarefa');
 
 let tarefas = [];
@@ -77,38 +77,71 @@ const deletarTarefa = (id) => {
   renderizarTarefas();
 };
 
+const alternarFinalizacao = (id) => {
+  const tarefa = tarefas.find((tarefa) => tarefa.id === id);
+
+  if (!tarefa) return;
+
+  tarefa.finalizada = !tarefa.finalizada;
+
+  const li = containerTarefas.querySelector(`[data-id="${id}"]`);
+  const checkbox = li.querySelector('.tarefa-checkbox');
+  checkbox.checked = tarefa.finalizada;
+};
+
+const abrirModal = (descricaoCompleta) => {
+  const paragrafo = containerModal.querySelector('[data-descricao-completa]');
+  paragrafo.textContent = descricaoCompleta;
+  containerModal.classList.add('ativo');
+};
+
+const fecharModal = () => {
+  containerModal.classList.remove('ativo');
+};
+
+const cliqueForaModal = (event) => {
+  if (event.target.classList.contains('container-modal')) {
+    fecharModal();
+  }
+};
+
 const handleClick = (event) => {
   const alvo = event.target;
+  const li = alvo.closest('li');
+
+  if (!li) return;
+
+  const id = li.dataset.id;
 
   const botaoExcluir = alvo.closest('.lixeira-icone');
-
   if (botaoExcluir) {
-    const li = botaoExcluir.closest('li');
-    const id = li.getAttribute('data-id');
     deletarTarefa(id);
-
-    return;
   }
 
   const spanDescricao = alvo.closest('.tarefa-descricao');
-
   if (spanDescricao) {
-    const li = spanDescricao.closest('li');
-    const id = li.getAttribute('data-id');
-    const tarefa = tarefas.find((tarefa) => tarefa.id === id);
-
-    if (!tarefa) return;
-
     if (isTruncada(spanDescricao)) {
-      const paragrafo = containerModal.querySelector('p');
-      paragrafo.textContent = tarefa.descricao;
-      toggleModal();
+      const tarefa = tarefas.find((tarefa) => tarefa.id === id);
+
+      if (!tarefa) return;
+
+      abrirModal(tarefa.descricao);
     } else {
-      tarefa.finalizada = !tarefa.finalizada;
-      renderizarTarefas();
+      alternarFinalizacao(id);
     }
   }
 };
 
 formTarefa.addEventListener('submit', adicionarTarefa);
+
 containerTarefas.addEventListener('click', handleClick);
+
+btnFecharModal.addEventListener('click', fecharModal);
+
+containerModal.addEventListener('click', cliqueForaModal);
+
+document.addEventListener('keydown', ({ key }) => {
+  if (key === 'Escape' && containerModal.classList.contains('ativo')) {
+    fecharModal();
+  }
+});
