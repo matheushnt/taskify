@@ -10,6 +10,18 @@ const templateTarefa = document.querySelector('#template-tarefa');
 
 let tarefas = [];
 
+const salvarTarefas = () => {
+  localStorage.setItem('tarefas', JSON.stringify(tarefas));
+};
+
+const carregarTarefas = () => {
+  const tarefasSalvas = localStorage.getItem('tarefas');
+  if (tarefasSalvas) {
+    tarefas = JSON.parse(tarefasSalvas);
+    renderizarTarefas();
+  }
+};
+
 const criarTarefa = (descricao) => ({
   id: crypto.randomUUID(),
   descricao,
@@ -66,6 +78,7 @@ const adicionarTarefa = (event) => {
 
   const novaTarefa = criarTarefa(descricao);
   tarefas.push(novaTarefa);
+  salvarTarefas();
   renderizarTarefas();
 
   inputAdicionarTarefa.value = '';
@@ -74,6 +87,7 @@ const adicionarTarefa = (event) => {
 
 const deletarTarefa = (id) => {
   tarefas = tarefas.filter((tarefa) => tarefa.id !== id);
+  salvarTarefas();
   renderizarTarefas();
 };
 
@@ -83,6 +97,7 @@ const alternarFinalizacao = (id) => {
   if (!tarefa) return;
 
   tarefa.finalizada = !tarefa.finalizada;
+  salvarTarefas();
 
   const li = containerTarefas.querySelector(`[data-id="${id}"]`);
   const checkbox = li.querySelector('.tarefa-checkbox');
@@ -145,3 +160,5 @@ document.addEventListener('keydown', ({ key }) => {
     fecharModal();
   }
 });
+
+carregarTarefas();
